@@ -38,6 +38,10 @@
         ctx.font = "50px Cassandra"
         ctx.fillText("Texto crema risa", 0 , 200)
 
+        // 100x100px area to copy
+        const data = ctx.getImageData(0,0,100,100)
+
+
     })
 
 </script>
