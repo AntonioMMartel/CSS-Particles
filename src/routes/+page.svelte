@@ -59,7 +59,7 @@
             }
 
             draw() {
-                ctx.fillStyle = "white"
+                ctx.fillStyle = "red"
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2) // Draw a whole circle
                 ctx.closePath();
@@ -70,16 +70,26 @@
 
         function init() {
             particleArray = []
-            particleArray.push(new Particle(80, 50))
-            particleArray.push(new Particle(80, 50))
-            particleArray.push(new Particle(20, 50))
-            particleArray.push(new Particle(4, 50))
-
+            // Fill with particles at random positions
+            for(let i = 0; i < 40; i++){
+                particleArray.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height)) 
+            }
 
         }
         init();
         console.log(particleArray)
 
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0,0, canvas.width, canvas.height) // Clear canvas each frame
+            particleArray.forEach(particle => {
+                particle.draw()
+            });
+            requestAnimationFrame(animate) // Recursive call to animation loop
+
+        }
+
+        animate()
 
     })
 
