@@ -50,6 +50,7 @@
             baseX: number;
             baseY: number;
             size: number = 3; // in pixels
+            defaultSize: number = 3;
             density: number = (Math.random() * 30) + 1 // Makes particle faster or slower. Like weight
             constructor(x: number, y: number){
                 this.x = x
@@ -65,6 +66,19 @@
                 ctx.closePath();
                 ctx.fill()
             }
+
+            update() {
+                let dx = mouse.x - this.x
+                let dy = mouse.y - this.y
+                let distance = Math.sqrt(dy * dy + dx * dx)
+                console.log(distance)
+                if(distance < 500) {
+                    this.size = 50
+                } else {
+                    this.size = this.defaultSize
+                }
+
+            }
  
         }
 
@@ -77,19 +91,20 @@
 
         }
         init();
-        console.log(particleArray)
 
         // Animation loop
         function animate() {
             ctx.clearRect(0,0, canvas.width, canvas.height) // Clear canvas each frame
             particleArray.forEach(particle => {
                 particle.draw()
+                particle.update()
             });
             requestAnimationFrame(animate) // Recursive call to animation loop
 
         }
 
-        animate()
+        animate();
+
 
     })
 
