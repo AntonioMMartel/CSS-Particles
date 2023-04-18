@@ -26,7 +26,7 @@
         const mouse = {
             x: 0,
             y: 0,
-            radius: 150
+            radius: 450
         }
 
         window.addEventListener('mousemove', function(event){
@@ -51,7 +51,7 @@
             baseY: number;
             size: number = 3; // in pixels
             defaultSize: number = 3;
-            density: number = (Math.random() * 30) + 1 // Makes particle faster or slower. Like weight
+            density: number = (Math.random()) + 1 // Makes particle faster or slower. Like weight
             constructor(x: number, y: number){
                 this.x = x
                 this.y = y
@@ -68,6 +68,8 @@
             }
 
             update() {
+
+
                 let dx = mouse.x - this.x
                 let dy = mouse.y - this.y
                 let distance = Math.sqrt(dy * dy + dx * dx)
@@ -81,11 +83,19 @@
                 let directionX = forceDirectionX * force * this.density // Amount of force the particle suffers reduced by density
                 let directionY = forceDirectionY * force * this.density
 
+                // Movement
                 if(distance < maxDistance) { // putting a maxDistance > mouse radius generates magnet effect then push effect around mouse
                     this.x -= directionX
                     this.y -= directionY
-                } else {
-                    this.size = this.defaultSize
+                } else { 
+                    if (this.x !== this.baseX) {
+                        let dx = this.x - this.baseX // Distance to return
+                        this.x -= dx/10 // Slowly goes back (in 10 frames of animation)
+                    } 
+                    if (this.y !== this.baseY) {
+                        let dy = this.y - this.baseY
+                        this.y -= dy/10
+                    }
                 }
 
 
@@ -101,7 +111,7 @@
  
         }
 
-        let particleAmount:number = 200
+        let particleAmount:number = 1000
 
         function init() {
             particleArray = []
