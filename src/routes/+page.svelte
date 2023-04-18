@@ -71,21 +71,42 @@
                 let dx = mouse.x - this.x
                 let dy = mouse.y - this.y
                 let distance = Math.sqrt(dy * dy + dx * dx)
-                console.log(distance)
+
+                let forceDirectionX = dx/distance; // % of distance in x axis
+                let forceDirectionY = dy/distance; // % of distance in y axis
+
+                let maxDistance = mouse.radius
+                let force = (maxDistance - distance) / maxDistance // The closer to the mouse the stronge the force
+
+                let directionX = forceDirectionX * force * this.density // Amount of force the particle suffers reduced by density
+                let directionY = forceDirectionY * force * this.density
+
+                if(distance < maxDistance) { // putting a maxDistance > mouse radius generates magnet effect then push effect around mouse
+                    this.x -= directionX
+                    this.y -= directionY
+                } else {
+                    this.size = this.defaultSize
+                }
+
+
+                /* Change size
                 if(distance < 500) {
                     this.size = 50
                 } else {
                     this.size = this.defaultSize
-                }
+                } */
+
 
             }
  
         }
 
+        let particleAmount:number = 200
+
         function init() {
             particleArray = []
             // Fill with particles at random positions
-            for(let i = 0; i < 40; i++){
+            for(let i = 0; i < particleAmount; i++){
                 particleArray.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height)) 
             }
 
