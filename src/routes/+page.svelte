@@ -35,15 +35,19 @@
             //console.log(mouse.x, mouse.y)
         });
 
+        /* Resolution */
+        let positionMultiplier:number = 20
+        let fontSize:string = "20px"
+
+
         ctx.fillStyle = "white"
-        ctx.font = "30px Cassandra"
-        ctx.fillText("Hola que tal", 60 , 70)
+        ctx.font = fontSize + " Cassandra"
+        ctx.fillText("Antonio Miguel Martel", 70 , 30)
 
         // 100x100px area to copy
-        const textCoordinates = ctx.getImageData(0, 0, 300, 100)
+        const textCoordinates = ctx.getImageData(0, 0, 300, 300)
 
         // Particles
-
         class Particle {
             x: number;
             y: number;
@@ -51,7 +55,8 @@
             baseY: number;
             size: number = 3; // in pixels
             defaultSize: number = 3;
-            density: number = (Math.random()) + 1 // Makes particle faster or slower. Like weight
+            density: number = (Math.random() * 40) + 1 // Makes particle faster or slower. Like weight
+            returnSpeedMultiplier: number = 5 // Modify particle return
             constructor(x: number, y: number){
                 this.x = x
                 this.y = y
@@ -87,14 +92,13 @@
                 } else { 
                     if (this.x !== this.baseX) {
                         let dx = this.x - this.baseX // Distance to return
-                        this.x -= dx/30 // Slowly goes back (in 10 frames of animation)
+                        this.x -= dx/this.returnSpeedMultiplier // Slowly goes back (in 10 frames of animation)
                     } 
                     if (this.y !== this.baseY) {
                         let dy = this.y - this.baseY
-                        this.y -= dy/30
+                        this.y -= dy/this.returnSpeedMultiplier
                     }
                 }
-
 
                 /* Change size
                 if(distance < 500) {
@@ -103,12 +107,14 @@
                     this.size = this.defaultSize
                 } */
 
-
             }
  
         }
 
-        let particleAmount:number = 1000
+        let adjustX:number = -100
+        let adjustY:number = 0
+        let maxDrawDistanceThreshold:number = 50
+        let minDrawDistanceThreshold:number = 25
 
         function init() {
             particleArray = []
@@ -123,9 +129,9 @@
 
                     // Opacity > 0.5
                     if (textCoordinates.data[(y * 4 * textCoordinates.width) + (x * 4) + 3] > 128) { 
-                        let positionX = x;
-                        let positionY = y;
-                        particleArray.push(new Particle(positionX * 5, positionY * 5))
+                        let positionX = x + adjustX;
+                        let positionY = y + adjustY;
+                        particleArray.push(new Particle(positionX * positionMultiplier, positionY * positionMultiplier))
                     } 
                 }
             }
@@ -139,13 +145,37 @@
                 particle.draw()
                 particle.update()
             });
+            connect()
             requestAnimationFrame(animate) // Recursive call to animation loop
 
         }
 
         animate();
-
-
+        
+        // Draws lines that connect each particle
+        function connect() {
+            // Compares particles
+            for (let a = 0; a < particleArray.length; a++){
+                // Particles that hava already been compared arent compared again
+                for(let b = a; b < particleArray.length; b++){
+                    let dx = particleArray[a].x - particleArray[b].x
+                    let dy = particleArray[a].y - particleArray[b].y
+                    let distance = Math.sqrt(dx * dx + dy * dy)
+                    
+                    // Draw a line between 2 points
+                    if(minDrawDistanceThreshold < distance){
+                        if(distance < maxDrawDistanceThreshold) {
+                            ctx.strokeStyle = 'white'
+                            ctx.lineWidth = 2
+                            ctx.beginPath();
+                            ctx.moveTo(particleArray[a].x, particleArray[a].y)
+                            ctx.lineTo(particleArray[b].x, particleArray[b].y)
+                            ctx.stroke()
+                        }
+                    }
+                }
+            }
+        }
     })
 
 
