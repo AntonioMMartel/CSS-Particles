@@ -154,6 +154,7 @@
         
         // Draws lines that connect each particle
         function connect() {
+            let opacity = 1;
             // Compares particles
             for (let a = 0; a < particleArray.length; a++){
                 // Particles that hava already been compared arent compared again
@@ -165,7 +166,9 @@
                     // Draw a line between 2 points
                     if(minDrawDistanceThreshold < distance){
                         if(distance < maxDrawDistanceThreshold) {
-                            ctx.strokeStyle = 'white'
+                            //opacity = 1 - (distance/maxDrawDistanceThreshold)
+                            opacity = 1 - ((distance - minDrawDistanceThreshold)/(maxDrawDistanceThreshold - minDrawDistanceThreshold))
+                            ctx.strokeStyle = 'rgba(255,255,255,' + opacity + ')'
                             ctx.lineWidth = 2
                             ctx.beginPath();
                             ctx.moveTo(particleArray[a].x, particleArray[a].y)
